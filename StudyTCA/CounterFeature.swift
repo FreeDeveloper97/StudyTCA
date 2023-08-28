@@ -21,6 +21,7 @@ struct CounterFeature: Reducer {
     enum Action {
         case decrementButtonTapped
         case factButtonTapped
+        case factResponse(String)
         case incrementButtonTapped
     }
     
@@ -35,15 +36,17 @@ struct CounterFeature: Reducer {
         case .factButtonTapped:
             state.fact = nil
             state.isLoading = true
+            return .run { [count = state.count] send in
+                // 여기서 비동기 작업을 수행한 후, Effect를 시스템으로 다시 보냅니다.
+                let (data, _) = try await URLSession.shared.data(from: URL(string: "http://numbersapi.com/\(count)")!)
+                let fact = String(decoding: data, as: UTF8.self)
+                // inout 값을 비동기작업에서 접근할 수 없기에 새로운 Action이 발생되는 구조
+                await send(.factResponse(fact))
+            }
             
-//            let (data, _) = try await URLSession.shared
-//                .data(from: URL(string: "http://numbersapi.com/\(state.count)")!)
-//            // 🛑 'async' call in a function that does not support concurrency
-//            // 🛑 Errors thrown from here are not handled
-//
-//            state.fact = String(decoding: data, as: UTF8.self)
-//            state.isLoading = false
-            
+        case let .factResponse(fact):
+            state.fact = fact
+            state.isLoading = false
             return .none
             
         case .incrementButtonTapped:
