@@ -13,11 +13,14 @@ struct CounterFeature: Reducer {
     /// 기능이 작업을 수행하는 데 필요한 상태를 보유하는 struct
     struct State: Equatable {
         var count = 0
+        var fact: String?
+        var isLoading = false
     }
     
     /// 사용자가 기능에서 수행할 수 있는 모든 작업을 보유하는 enum
     enum Action {
         case decrementButtonTapped
+        case factButtonTapped
         case incrementButtonTapped
     }
     
@@ -26,9 +29,26 @@ struct CounterFeature: Reducer {
         switch action {
         case .decrementButtonTapped:
             state.count -= 1
+            state.fact = nil
             return .none
+            
+        case .factButtonTapped:
+            state.fact = nil
+            state.isLoading = true
+            
+//            let (data, _) = try await URLSession.shared
+//                .data(from: URL(string: "http://numbersapi.com/\(state.count)")!)
+//            // 🛑 'async' call in a function that does not support concurrency
+//            // 🛑 Errors thrown from here are not handled
+//
+//            state.fact = String(decoding: data, as: UTF8.self)
+//            state.isLoading = false
+            
+            return .none
+            
         case .incrementButtonTapped:
             state.count += 1
+            state.fact = nil
             return .none
         }
     }
