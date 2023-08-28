@@ -15,8 +15,6 @@ struct ContactsFeature: Reducer {
         @PresentationState var destination: Destination.State?
         /// 연락처 정보들
         var contacts: IdentifiedArrayOf<Contact> = []
-        /// 현재 스택에 push된 기능을 나타냅니다.
-        var path = StackState<ContactDetailFeature.State>()
     }
     
     enum Action: Equatable {
@@ -26,7 +24,7 @@ struct ContactsFeature: Reducer {
         case deleteButtonTapped(id: Contact.ID)
         /// destination 이벤트 (AddContact 또는 Alert)
         case destination(PresentationAction<Destination.Action>)
-        case path(StackAction<ContactDetailFeature.State, ContactDetailFeature.Action>)
+        case contactTapped(contact: Contact)
         
         /// alert를 표시하기 위한 모든 작업들
         enum Alert: Equatable {
@@ -47,8 +45,8 @@ struct ContactsFeature: Reducer {
                 )
                 return .none
                 
-            /// AddContactFeature 내에서 delegate로 .saveContact를 알리면 받은 contact를 토대로 현재 state 값에 반영한다.
-            /// AddContactFeature 내에서 dismiss Effect를 수행하기에 nil값으로 설정할 필요가 없어진다.
+                /// AddContactFeature 내에서 delegate로 .saveContact를 알리면 받은 contact를 토대로 현재 state 값에 반영한다.
+                /// AddContactFeature 내에서 dismiss Effect를 수행하기에 nil값으로 설정할 필요가 없어진다.
             case let .destination(.presented(.addContact(.delegate(.saveContact(contact))))):
                 state.contacts.append(contact)
                 return .none
@@ -57,28 +55,27 @@ struct ContactsFeature: Reducer {
                 state.contacts.remove(id: id)
                 return .none
                 
+            case let .destination(.presented(.contactDetail(.delegate(.confirmDeletion(id))))):
+                state.contacts.remove(id: id)
+                return .none
+                
             case .destination:
+                return .none
+                
+            case let .contactTapped(contact: contact):
+                state.destination = .contactDetail(
+                    ContactDetailFeature.State(contact: contact)
+                )
                 return .none
                 
             case let .deleteButtonTapped(id: id):
                 state.destination = .alert(.deleteConfirmation(id: id))
-                return .none
-                
-            case let .path(.element(id: id, action: .delegate(.confirmDeletion))):
-                guard let detailState = state.path[id: id] else { return .none }
-                state.contacts.remove(id: detailState.contact.id)
-                return .none
-                
-            case .path:
                 return .none
             }
         }
         /// ifLet reducer operator를 통해 Destination Reducer를 ContactsFeature에 통합합니다.
         .ifLet(\.$destination, action: /Action.destination) {
             Destination()
-        }
-        .forEach(\.path, action: /Action.path) {
-            ContactDetailFeature()
         }
     }
 }
@@ -89,16 +86,21 @@ extension ContactsFeature {
         enum State: Equatable {
             case addContact(AddContactFeature.State)
             case alert(AlertState<ContactsFeature.Action.Alert>)
+            case contactDetail(ContactDetailFeature.State)
         }
         
         enum Action: Equatable {
             case addContact(AddContactFeature.Action)
             case alert(ContactsFeature.Action.Alert)
+            case contactDetail(ContactDetailFeature.Action)
         }
         
         var body: some ReducerOf<Self> {
             Scope(state: /State.addContact, action: /Action.addContact) {
                 AddContactFeature()
+            }
+            Scope(state: /State.contactDetail, action: /Action.contactDetail) {
+                ContactDetailFeature()
             }
         }
     }

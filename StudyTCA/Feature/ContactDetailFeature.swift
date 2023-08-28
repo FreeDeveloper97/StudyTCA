@@ -22,8 +22,8 @@ struct ContactDetailFeature: Reducer {
             case confirmDeletion
         }
         
-        enum Delegate {
-            case confirmDeletion
+        enum Delegate: Equatable {
+            case confirmDeletion(Contact.ID)
         }
     }
     
@@ -33,8 +33,8 @@ struct ContactDetailFeature: Reducer {
         Reduce { state, action in
             switch action {
             case .alert(.presented(.confirmDeletion)):
-                return .run { send in
-                    await send(.delegate(.confirmDeletion))
+                return .run { [contact = state.contact] send in
+                    await send(.delegate(.confirmDeletion(contact.id)))
                     await self.dismiss()
                 }
                 
