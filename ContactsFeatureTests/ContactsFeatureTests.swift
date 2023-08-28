@@ -1,0 +1,54 @@
+//
+//  ContactsFeatureTests.swift
+//  ContactsFeatureTests
+//
+//  Created by Kang Minsang on 2023/08/28.
+//
+
+import XCTest
+import ComposableArchitecture
+
+@MainActor
+final class ContactsFeatureTests: XCTestCase {
+    override func setUpWithError() throws {
+        // Put setup code here. This method is called before the invocation of each test method in the class.
+    }
+
+    override func tearDownWithError() throws {
+        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    }
+
+    func testAddFlow() async {
+        let store = TestStore(initialState: ContactsFeature.State()) {
+            ContactsFeature()
+        } withDependencies: {
+            $0.uuid = .incrementing // 0부터 순차적으로 증가하는 UUID 생성기
+        }
+        
+        /// + 버튼 눌렀을 때 UUID(0)의 Contact값을 지닌 State 임을 확인
+        await store.send(.addButtonTapped) {
+            $0.destination = .addContact(
+                AddContactFeature.State(
+                    contact: Contact(id: UUID(0), name: "")
+                )
+            )
+        }
+        
+        /// 사용자가 텍스트필드에 입력하는 것을 에뮬레이션
+        await store.send(.destination(.presented(.addContact(.setName("Blob Jr."))))) {
+            $0.$destination[case: /ContactsFeature.Destination.State.addContact]?.contact.name = "Blob Jr."
+        }
+        
+        /// 사용자가 Save 버튼을 탭하는 것을 에뮬레이션
+        await store.send(.destination(.presented(.addContact(.saveButtonTapped))))
+        await store.receive(.destination(.presented(.addContact(.delegate(.saveContact(Contact(id: UUID(0), name: "Blob Jr."))))))
+        ) {
+            $0.contacts = [
+            Contact(id: UUID(0), name: "Blob Jr.")
+            ]
+        }
+        await store.receive(.destination(.dismiss)) {
+            $0.destination = nil
+        }
+    }
+}
