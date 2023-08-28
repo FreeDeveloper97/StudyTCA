@@ -62,4 +62,21 @@ final class CounterFeatureTests: XCTestCase {
         }
         /// 시간변화를 조정할 수 있기에 즉시 원하는 시나리오를 테스트할 수 있습니다.
     }
+    
+    /// Reducer의 network 비동기작업수신을 통한 상태변경 테스트
+    func testNumberFact() async {
+        let store = TestStore(initialState: CounterFeature.State()) {
+            CounterFeature()
+        }
+        
+        /// 사용자가 fact 버튼을 탭하고 진행률 표시기를 확인한 다음 network 에서 시스템에 다시 피드백되는 흐름을 에뮬레이션
+        await store.send(.factButtonTapped) {
+            $0.isLoading = true
+        }
+        /// 하지만 network의 결과내용이 매번 달라지며, 얼마나 걸릴지 예측할 수 없으므로 테스트가 불가능한 상황
+        await store.receive(.factResponse("???"), timeout: .seconds(1)) {
+            $0.isLoading = false
+            $0.fact = "???"
+        }
+    }
 }
