@@ -19,7 +19,7 @@ struct CounterFeature: Reducer {
     }
     
     /// 사용자가 기능에서 수행할 수 있는 모든 작업을 보유하는 enum
-    enum Action {
+    enum Action: Equatable {
         case decrementButtonTapped
         case factButtonTapped
         case factResponse(String)
@@ -32,6 +32,9 @@ struct CounterFeature: Reducer {
     enum CancelID {
         case timer
     }
+    
+    /// dependency management system을 통해 제어 가능한 시계를 제공
+    @Dependency(\.continuousClock) var clock
     
     /// 사용자 작업에 따라 상태를 현재 값에서 다음 값으로 발전시키고, 기능이 외부 세계에서 실행하려는 모든 효과를 반환
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
@@ -72,8 +75,7 @@ struct CounterFeature: Reducer {
             
             if state.isTimerRunning {
                 return .run { send in
-                    while true {
-                        try await Task.sleep(for: .seconds(1))
+                    for await _ in self.clock.timer(interval: .seconds(1)) {
                         await send(.timerTick)
                     }
                 }
