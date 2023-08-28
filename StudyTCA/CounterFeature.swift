@@ -15,6 +15,7 @@ struct CounterFeature: Reducer {
         var count = 0
         var fact: String?
         var isLoading = false
+        var isTimerRunning = false
     }
     
     /// 사용자가 기능에서 수행할 수 있는 모든 작업을 보유하는 enum
@@ -23,6 +24,13 @@ struct CounterFeature: Reducer {
         case factButtonTapped
         case factResponse(String)
         case incrementButtonTapped
+        case timerTick
+        case toggleTimerButtonTapped
+    }
+    
+    /// effect cancellation 기능으로 특정 Effect를 취소할 수 있습니다.
+    enum CancelID {
+        case timer
     }
     
     /// 사용자 작업에 따라 상태를 현재 값에서 다음 값으로 발전시키고, 기능이 외부 세계에서 실행하려는 모든 효과를 반환
@@ -53,6 +61,26 @@ struct CounterFeature: Reducer {
             state.count += 1
             state.fact = nil
             return .none
+            
+        case .timerTick:
+            state.count += 1
+            state.fact = nil
+            return .none
+            
+        case .toggleTimerButtonTapped:
+            state.isTimerRunning.toggle()
+            
+            if state.isTimerRunning {
+                return .run { send in
+                    while true {
+                        try await Task.sleep(for: .seconds(1))
+                        await send(.timerTick)
+                    }
+                }
+                .cancellable(id: CancelID.timer) // 해당 Effect를 취소 가능하도록 설정
+            } else {
+                return .cancel(id: CancelID.timer) // 특정 Effect를 취소
+            }
         }
     }
 }
