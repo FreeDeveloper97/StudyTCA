@@ -44,10 +44,33 @@ final class ContactsFeatureTests: XCTestCase {
         await store.receive(.destination(.presented(.addContact(.delegate(.saveContact(Contact(id: UUID(0), name: "Blob Jr."))))))
         ) {
             $0.contacts = [
-            Contact(id: UUID(0), name: "Blob Jr.")
+                Contact(id: UUID(0), name: "Blob Jr.")
             ]
         }
         await store.receive(.destination(.dismiss)) {
+            $0.destination = nil
+        }
+    }
+    
+    func testAddFlow_NonExhaustive() async {
+        let store = TestStore(initialState: ContactsFeature.State()) {
+            ContactsFeature()
+        } withDependencies: {
+            $0.uuid = .incrementing // 0부터 순차적으로 증가하는 UUID 생성기
+        }
+        
+        store.exhaustivity = .off // 비완전환 TestStore 에서는 원하지 않는 경우 상태 변경을 주장할 필요가 없습니다.
+        
+        await store.send(.addButtonTapped)
+        await store.send(.destination(.presented(.addContact(.setName("Blob Jr.")))))
+        await store.send(.destination(.presented(.addContact(.saveButtonTapped))))
+        await store.skipReceivedActions() // 남은 모든 작업을 수행
+        
+        /// 최종 상태 확인
+        store.assert {
+            $0.contacts = [
+                Contact(id: UUID(0), name: "Blob Jr.")
+            ]
             $0.destination = nil
         }
     }
