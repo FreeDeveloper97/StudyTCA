@@ -13,6 +13,7 @@
 		8732C6152A9C452400D7F25A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8732C6142A9C452400D7F25A /* Preview Assets.xcassets */; };
 		877CF12E2A9C463800B2299F /* ComposableArchitecture in Frameworks */ = {isa = PBXBuildFile; productRef = 877CF12D2A9C463800B2299F /* ComposableArchitecture */; };
 		877CF1302A9C464E00B2299F /* CounterFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877CF12F2A9C464E00B2299F /* CounterFeature.swift */; };
+		877CF1322A9C4B5500B2299F /* CounterFeatureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877CF1312A9C4B5500B2299F /* CounterFeatureView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		8732C6112A9C452400D7F25A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8732C6142A9C452400D7F25A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		877CF12F2A9C464E00B2299F /* CounterFeature.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeature.swift; sourceTree = "<group>"; };
+		877CF1312A9C4B5500B2299F /* CounterFeatureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CounterFeatureView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -60,6 +62,7 @@
 				8732C6112A9C452400D7F25A /* Assets.xcassets */,
 				8732C6132A9C452400D7F25A /* Preview Content */,
 				877CF12F2A9C464E00B2299F /* CounterFeature.swift */,
+				877CF1312A9C4B5500B2299F /* CounterFeatureView.swift */,
 			);
 			path = StudyTCA;
 			sourceTree = "<group>";
@@ -150,6 +153,7 @@
 			files = (
 				877CF1302A9C464E00B2299F /* CounterFeature.swift in Sources */,
 				8732C6102A9C452400D7F25A /* ContentView.swift in Sources */,
+				877CF1322A9C4B5500B2299F /* CounterFeatureView.swift in Sources */,
 				8732C60E2A9C452400D7F25A /* StudyTCAApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

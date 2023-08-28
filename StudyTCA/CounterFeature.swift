@@ -11,7 +11,7 @@ import ComposableArchitecture
 /// Reducer: 기능이 구축되는 기본 단위, 앱 기능의 논리와 동작을 나타냅니다.
 struct CounterFeature: Reducer {
     /// 기능이 작업을 수행하는 데 필요한 상태를 보유하는 struct
-    struct State {
+    struct State: Equatable {
         var count = 0
     }
     
