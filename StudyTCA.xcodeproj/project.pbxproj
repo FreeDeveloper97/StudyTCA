@@ -21,6 +21,7 @@
 		877CF14D2A9C938B00B2299F /* ContactsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877CF14C2A9C938B00B2299F /* ContactsView.swift */; };
 		877CF14F2A9C95AD00B2299F /* AddContactFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877CF14E2A9C95AD00B2299F /* AddContactFeature.swift */; };
 		877CF1512A9C96A100B2299F /* AddContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877CF1502A9C96A100B2299F /* AddContactView.swift */; };
+		877CF1542A9C9F5500B2299F /* ContactsFeature.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877CF14A2A9C928F00B2299F /* ContactsFeature.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -90,17 +91,13 @@
 		8732C60C2A9C452400D7F25A /* StudyTCA */ = {
 			isa = PBXGroup;
 			children = (
-				877CF1352A9C6C3800B2299F /* Info.plist */,
 				8732C60D2A9C452400D7F25A /* App.swift */,
+				877CF1522A9C9F1F00B2299F /* View */,
+				877CF1532A9C9F3F00B2299F /* Feature */,
+				877CF1552A9C9F7D00B2299F /* Interface */,
+				877CF1352A9C6C3800B2299F /* Info.plist */,
 				8732C6112A9C452400D7F25A /* Assets.xcassets */,
 				8732C6132A9C452400D7F25A /* Preview Content */,
-				877CF12F2A9C464E00B2299F /* CounterFeature.swift */,
-				877CF1312A9C4B5500B2299F /* CounterView.swift */,
-				877CF1472A9C8CAB00B2299F /* NumberFactClient.swift */,
-				877CF14C2A9C938B00B2299F /* ContactsView.swift */,
-				877CF14A2A9C928F00B2299F /* ContactsFeature.swift */,
-				877CF1502A9C96A100B2299F /* AddContactView.swift */,
-				877CF14E2A9C95AD00B2299F /* AddContactFeature.swift */,
 			);
 			path = StudyTCA;
 			sourceTree = "<group>";
@@ -119,6 +116,34 @@
 				877CF13F2A9C779100B2299F /* CounterFeatureTests.swift */,
 			);
 			path = CounterFeatureTests;
+			sourceTree = "<group>";
+		};
+		877CF1522A9C9F1F00B2299F /* View */ = {
+			isa = PBXGroup;
+			children = (
+				877CF1312A9C4B5500B2299F /* CounterView.swift */,
+				877CF14C2A9C938B00B2299F /* ContactsView.swift */,
+				877CF1502A9C96A100B2299F /* AddContactView.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		877CF1532A9C9F3F00B2299F /* Feature */ = {
+			isa = PBXGroup;
+			children = (
+				877CF14A2A9C928F00B2299F /* ContactsFeature.swift */,
+				877CF12F2A9C464E00B2299F /* CounterFeature.swift */,
+				877CF14E2A9C95AD00B2299F /* AddContactFeature.swift */,
+			);
+			path = Feature;
+			sourceTree = "<group>";
+		};
+		877CF1552A9C9F7D00B2299F /* Interface */ = {
+			isa = PBXGroup;
+			children = (
+				877CF1472A9C8CAB00B2299F /* NumberFactClient.swift */,
+			);
+			path = Interface;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -245,6 +270,7 @@
 				877CF1492A9C8CAF00B2299F /* NumberFactClient.swift in Sources */,
 				877CF1402A9C779100B2299F /* CounterFeatureTests.swift in Sources */,
 				877CF1462A9C77CD00B2299F /* CounterFeature.swift in Sources */,
+				877CF1542A9C9F5500B2299F /* ContactsFeature.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
