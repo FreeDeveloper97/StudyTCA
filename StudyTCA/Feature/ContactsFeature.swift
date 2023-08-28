@@ -8,12 +8,6 @@
 import Foundation
 import ComposableArchitecture
 
-/// 연락처 정보 Model
-struct Contact: Equatable, Identifiable {
-    let id: UUID
-    var name: String
-}
-
 /// 연락처 정보들을 포함한 리듀서
 struct ContactsFeature: Reducer {
     struct State: Equatable {
@@ -40,18 +34,10 @@ struct ContactsFeature: Reducer {
                 )
                 return .none
                 
-            /// AddContactFeature 내에서 .cancelButtonTapped Effect가 발생하면 해당 기능을 닫고 다른 작업을 수행하지 않으려면 간단히 상태를 없애면 된다.
-            case .addContact(.presented(.cancelButtonTapped)):
-                state.addContact = nil
-                return .none
-            
-            /// AddContactFeature 내에서 .saveButtonTapped Effect가 발생하면 contact 값을 접근하여 현재 state 값에 반영한다.
-            case .addContact(.presented(.saveButtonTapped)):
-                guard let contact = state.addContact?.contact else {
-                    return .none
-                }
+            /// AddContactFeature 내에서 delegate로 .saveContact를 알리면 받은 contact를 토대로 현재 state 값에 반영한다.
+            /// AddContactFeature 내에서 dismiss Effect를 수행하기에 nil값으로 설정할 필요가 없어진다.
+            case let .addContact(.presented(.delegate(.saveContact(contact)))):
                 state.contacts.append(contact)
-                state.addContact = nil
                 return .none
                 
             case .addContact:
