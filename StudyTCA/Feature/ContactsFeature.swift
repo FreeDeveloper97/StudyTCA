@@ -15,6 +15,8 @@ struct ContactsFeature: Reducer {
         @PresentationState var destination: Destination.State?
         /// 연락처 정보들
         var contacts: IdentifiedArrayOf<Contact> = []
+        /// 현재 스택에 push된 기능을 나타냅니다.
+        var path = StackState<ContactDetailFeature.State>()
     }
     
     enum Action: Equatable {
@@ -24,6 +26,7 @@ struct ContactsFeature: Reducer {
         case deleteButtonTapped(id: Contact.ID)
         /// destination 이벤트 (AddContact 또는 Alert)
         case destination(PresentationAction<Destination.Action>)
+        case path(StackAction<ContactDetailFeature.State, ContactDetailFeature.Action>)
         
         /// alert를 표시하기 위한 모든 작업들
         enum Alert: Equatable {
@@ -60,11 +63,17 @@ struct ContactsFeature: Reducer {
             case let .deleteButtonTapped(id: id):
                 state.destination = .alert(.deleteConfirmation(id: id))
                 return .none
+                
+            case .path:
+                return .none
             }
         }
         /// ifLet reducer operator를 통해 Destination Reducer를 ContactsFeature에 통합합니다.
         .ifLet(\.$destination, action: /Action.destination) {
             Destination()
+        }
+        .forEach(\.path, action: /Action.path) {
+            ContactDetailFeature()
         }
     }
 }
