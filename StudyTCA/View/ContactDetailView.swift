@@ -14,10 +14,13 @@ struct ContactDetailView: View {
     var body: some View {
         WithViewStore(self.store, observe: { $0 }) { viewStore in
             Form {
-                
+                Button("Delete") {
+                    viewStore.send(.deleteButtonTapped)
+                }
             }
             .navigationTitle(Text(viewStore.contact.name))
         }
+        .alert(store: self.store.scope(state: \.$alert, action: { .alert($0) }))
     }
 }
 
