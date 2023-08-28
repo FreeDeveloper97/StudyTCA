@@ -35,6 +35,8 @@ struct CounterFeature: Reducer {
     
     /// dependency management system을 통해 제어 가능한 시계를 제공
     @Dependency(\.continuousClock) var clock
+    /// dependency 를 통해 fetch가 추상화된 NumberFactClient를 제공
+    @Dependency(\.numberFact) var numberFact
     
     /// 사용자 작업에 따라 상태를 현재 값에서 다음 값으로 발전시키고, 기능이 외부 세계에서 실행하려는 모든 효과를 반환
     func reduce(into state: inout State, action: Action) -> Effect<Action> {
@@ -49,10 +51,7 @@ struct CounterFeature: Reducer {
             state.isLoading = true
             return .run { [count = state.count] send in
                 // 여기서 비동기 작업을 수행한 후, Effect를 시스템으로 다시 보냅니다.
-                let (data, _) = try await URLSession.shared.data(from: URL(string: "http://numbersapi.com/\(count)")!)
-                let fact = String(decoding: data, as: UTF8.self)
-                // inout 값을 비동기작업에서 접근할 수 없기에 새로운 Action이 발생되는 구조
-                await send(.factResponse(fact))
+                try await send(.factResponse(self.numberFact.fetch(count)))
             }
             
         case let .factResponse(fact):

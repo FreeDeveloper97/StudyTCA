@@ -67,6 +67,9 @@ final class CounterFeatureTests: XCTestCase {
     func testNumberFact() async {
         let store = TestStore(initialState: CounterFeature.State()) {
             CounterFeature()
+        } withDependencies: {
+            /// 종속성을 재정의하여 network 의 fetch 결과값의 의존성을 주입할 수 있다.
+            $0.numberFact.fetch = {"\($0) is a good number." }
         }
         
         /// 사용자가 fact 버튼을 탭하고 진행률 표시기를 확인한 다음 network 에서 시스템에 다시 피드백되는 흐름을 에뮬레이션
@@ -74,9 +77,10 @@ final class CounterFeatureTests: XCTestCase {
             $0.isLoading = true
         }
         /// 하지만 network의 결과내용이 매번 달라지며, 얼마나 걸릴지 예측할 수 없으므로 테스트가 불가능한 상황
-        await store.receive(.factResponse("???"), timeout: .seconds(1)) {
+        /// 종속성을 재정의하였기에 실제 network를 사용하지 않으며 원하는 결과를 즉작적으로 확인할 수 있다.
+        await store.receive(.factResponse("0 is a good number.")) {
             $0.isLoading = false
-            $0.fact = "???"
+            $0.fact = "0 is a good number."
         }
     }
 }
